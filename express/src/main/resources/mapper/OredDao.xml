@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.iazure.ex.express.dao.OrderDao">
+    <!--    <resultMap id="orderSelectResult" type="me.iazure.ex.express.dto.OrderSelectResult">-->
+    <!--        <id property="id" column="id" javaType="Integer"/>-->
+    <!--        <result property="openId" column="open_id" javaType="String"/>-->
+    <!--        <result property="number" column="number" javaType="String"/>-->
+    <!--        <result property="company" column="company" javaType="String"/>-->
+    <!--        <result property="name" column="name" javaType="String"/>-->
+    <!--        <result property="phone" column="phone" javaType="String"/>-->
+    <!--        <result property="flats" column="flats" javaType="String"/>-->
+    <!--        <result property="hostel" column="hostel" javaType="String"/>-->
+    <!--        <result property="createTime" column="create_time" javaType="Date"/>-->
+    <!--        <result property="lastTime" column="last_time" javaType="Date"/>-->
+    <!--        <result property="lastPreson" column="last_preson" javaType="String"/>-->
+    <!--        <result property="status" column="status" javaType="Integer"/>-->
+    <!--        <result property="type" column="type" javaType="Integer"/>-->
+    <!--        <result property="paymentStatus" column="payment_status" javaType="Integer"/>-->
+    <!--        <result property="decs" column="decs" javaType="String"/>-->
+    <!--    </resultMap>-->
+    <insert id="insertOrder" parameterType="me.iazure.ex.express.entity.Order" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO
+        w_order(
+                open_id,
+                number,
+                company,
+                name,
+                phone,
+                flats_id,
+                hostel,
+                create_time,
+                last_preson,
+                last_time,
+                status,
+                type,
+                payment_status,
+                decs
+                )
+        VALUES (
+        #{openId},
+        #{number},
+        #{company},
+        #{name},
+        #{phone},
+        #{flatsId},
+        #{hostel},
+        #{createTime},
+        #{lastPreson},
+        #{lastTime},
+        #{status},
+        #{type},
+        #{paymentStatus},
+        #{decs}
+        )
+    </insert>
+    <select id="selectByOpenId" parameterType="me.iazure.ex.express.dto.OpenIdSelect" resultType="me.iazure.ex.express.dto.OrderSelectResult">
+        SELECT
+        w_order.id,
+        w_order.open_id,
+        w_order.number,
+        w_order.company,
+        w_order.`name`,
+        w_order.phone,
+        w_order.hostel,
+        w_order.create_time,
+        w_order.last_preson,
+        w_order.last_time,
+        w_order.`status`,
+        w_order.type,
+        w_order.payment_status,
+        w_order.decs,
+        w_flats.flats_name
+        FROM
+        w_order
+        LEFT JOIN
+        w_flats
+        ON
+        w_order.flats_id = w_flats.id
+        <where>
+            <if test="openIdSelect.openId!=null">
+                AND w_order.`open_id` = #{openIdSelect.openId}
+            </if>
+            <if test="openIdSelect.status>0">
+                AND w_order.`status` = #{openIdSelect.status}
+            </if>
+            <if test="openIdSelect.statusTime!=null and openIdSelect.endTime!=null">
+                AND w_order.create_time between #{openIdSelect.statusTime} and #{openIdSelect.endTime}
+            </if>
+        </where>
+        ORDER BY
+        w_order.create_time DESC
+        LIMIT #{openIdSelect.page},#{openIdSelect.size};
+    </select>
+    <select id="selectByOpenIdCount" parameterType="me.iazure.ex.express.dto.OpenIdSelect" resultType="int">
+        SELECT
+            count(1)
+        FROM
+            w_order
+        <where>
+            <if test="openIdSelect.openId!=null">
+                AND w_order.open_id=#{openIdSelect.openId}
+            </if>
+            <if test="openIdSelect.status>0">
+                AND w_order.`status` = #{openIdSelect.status}
+            </if>
+            <if test="openIdSelect.statusTime!=null and openIdSelect.endTime!=null">
+                AND w_order.create_time between #{openIdSelect.statusTime} and #{openIdSelect.endTime}
+            </if>
+        </where>
+    </select>
+    <select id="selectOrderList" parameterType="me.iazure.ex.express.dto.OrderSelect"
+            resultType="me.iazure.ex.express.dto.OrderSelectResult">
+        SELECT
+        w_order.id,
+        w_order.open_id,
+        w_order.number,
+        w_order.company,
+        w_order.`name`,
+        w_order.phone,
+        w_order.hostel,
+        w_order.create_time,
+        w_order.last_preson,
+        w_order.last_time,
+        w_order.`status`,
+        w_order.type,
+        w_order.payment_status,
+        w_order.decs,
+        w_flats.flats_name
+        FROM
+        w_flats
+        LEFT JOIN
+        w_order
+        ON
+        w_flats.id = w_order.flats_id
+        <where>
+            <if test="orderSelect.flats>0">
+                AND w_order.apartment_id = #{orderSelect.flats}
+            </if>
+            <if test="orderSelect.name!=null">
+                AND w_order.`name` LIKE concat('%','${orderSelect.name}','%')
+            </if>
+            <if test="orderSelect.id>0">
+                AND w_order.id = #{orderSelect.id}
+            </if>
+            <if test="orderSelect.phone!=null">
+                AND w_order.phone LIKE '%${orderSelect.phone}%'
+            </if>
+            <if test="orderSelect.company!=null">
+                AND w_order.company LIKE '%${orderSelect.company}%'
+            </if>
+            <if test="orderSelect.type>0">
+                AND w_order.type=#{orderSelect.type}
+            </if>
+            <if test="orderSelect.startTime!=null and orderSelect.endTime=null">
+                AND w_order.create_time between #{orderSelect.startTime} and #{orderSelect.endTime}
+            </if>
+        </where>
+        ORDER BY
+        w_order.create_time DESC
+        LIMIT #{orderSelect.rowIndex},#{orderSelect.pageSize};
+    </select>
+    <select id="selectOrderListCount" parameterType="me.iazure.ex.express.dto.OrderSelect" resultType="int">
+        SELECT
+        count(1)
+        FROM
+        w_order
+        <where>
+            <if test="orderSelect.flats>0">
+                AND w_order.apartment_id = #{orderSelect.flats}
+            </if>
+            <if test="orderSelect.name!=null">
+                AND w_order.`name` LIKE concat('%','${orderSelect.name}','%')
+            </if>
+            <if test="orderSelect.id>0">
+                AND w_order.id = #{orderSelect.id}
+            </if>
+            <if test="orderSelect.phone!=null">
+                AND w_order.phone LIKE '%${orderSelect.phone}%'
+            </if>
+            <if test="orderSelect.company!=null">
+                AND w_order.company LIKE '%${orderSelect.company}%'
+            </if>
+            <if test="orderSelect.type>0">
+                AND w_order.type=#{orderSelect.type}
+            </if>
+            <if test="orderSelect.startTime!=null and orderSelect.endTime=null">
+                AND w_order.create_time between #{orderSelect.startTime} and #{orderSelect.endTime}
+            </if>
+        </where>
+    </select>
+    <select id="selectById" parameterType="Integer" resultType="me.iazure.ex.express.entity.Order">
+        SELECT
+            w_order.`status`
+        FROM
+            w_order
+        WHERE
+            w_order.id = #{id}
+    </select>
+
+    <update id="updataStauts" parameterType="Integer" useGeneratedKeys="true" keyProperty="id,status"
+            keyColumn="id,status">
+        UPDATE w_order SET w_order.status=#{status} WHERE w_order.id = #{id}
+    </update>
+</mapper>

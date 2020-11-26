@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.iazure.ex.express.dao.PresonInfoDao">
+    <select id="getId" resultType="me.iazure.ex.express.entity.PresonInfo" parameterType="int">
+			SELECT
+				w_personnel.id,
+				w_personnel.`name`,
+				w_personnel.student_id,
+				w_personnel.`password`,
+				w_personnel.type
+			FROM
+				w_personnel
+			WHERE
+				w_personnel.id =  = #{id}
+    </select>
+    <select id="getByStudentID" resultType="me.iazure.ex.express.entity.PresonInfo" parameterType="String">
+		SELECT
+			w_personnel.id,
+			w_personnel.`name`,
+			w_personnel.student_id,
+			w_personnel.`password`,
+			w_personnel.type
+		FROM
+			w_personnel
+		WHERE
+			w_personnel.student_id =  #{studentId}
+	</select>
+    <select id="goLogin" resultType="me.iazure.ex.express.entity.PresonInfo" parameterType="String">
+		SELECT
+			w_personnel.id,
+			w_personnel.`name`,
+			w_personnel.student_id,
+			w_personnel.`password`,
+			w_personnel.type
+		FROM
+			w_personnel
+		WHERE
+			w_personnel.student_id =  #{studentId}
+		AND
+			w_personnel.`password` = #{password}
+	</select>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.iazure.ex.express.dao.FlatsDao">
+    <select id="queryFlatsList" resultType="me.iazure.ex.express.entity.Flats">
+        SELECT
+            w_flats.id,
+            w_flats.flats_name
+        FROM
+            w_flats
+    </select>
+</mapper>
